@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keyboard Sandi</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh; display:flex; justify-content:center; align-items:center;
+  background:#05080d; font-family:Arial,Helvetica,sans-serif; color:#fff;
+}
+.phone{
+  width:min(100%,430px); min-height:100vh; padding:28px 22px 32px;
+  display:flex; flex-direction:column; justify-content:center;
+  background:radial-gradient(circle at 50% 20%,#18202d 0,#0b1018 45%,#05080d 100%);
+}
+.status{display:flex; justify-content:space-between; font-size:18px; font-weight:700; margin-bottom:45px}
+.status-right{font-size:15px; letter-spacing:3px}
+.lock{font-size:64px; text-align:center; margin-bottom:12px}
+h1{text-align:center;font-size:34px;margin:0 0 8px}
+.sub{text-align:center;color:#aeb8ca;font-size:17px;margin-bottom:28px}
+.display{
+  height:74px; border:2px solid #4b5669; border-radius:40px;
+  display:flex;align-items:center;justify-content:center;gap:18px;
+  margin:0 8px 30px; background:rgba(10,15,23,.45);
+}
+.dot{width:12px;height:12px;border-radius:50%;background:#f4f7fb}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.key{
+  height:92px;border:1px solid #3d4759;border-radius:26px;
+  background:linear-gradient(145deg,#293241,#151c27);
+  color:white; cursor:pointer; box-shadow:0 7px 18px rgba(0,0,0,.28);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  user-select:none; -webkit-tap-highlight-color:transparent;
+}
+.key:active{transform:scale(.96);background:#354154}
+.num{font-size:42px;font-weight:700;line-height:1}
+.letters{font-size:15px;color:#aeb8ca;margin-top:6px;letter-spacing:1px}
+.icon{font-size:29px}
+.enter{
+  margin-top:20px;height:76px;border:0;border-radius:28px;
+  background:linear-gradient(135deg,#198cff,#0876ed);
+  color:white;font-size:27px;font-weight:700;cursor:pointer;
+  box-shadow:0 8px 22px rgba(0,116,255,.3);
+}
+.enter:active{transform:scale(.98)}
+.message{text-align:center;min-height:22px;margin-top:12px;color:#aeb8ca;font-size:14px}
+@media(max-height:760px){
+  .phone{padding-top:16px;padding-bottom:16px}
+  .status{margin-bottom:20px}.lock{font-size:48px}h1{font-size:28px}
+  .sub{margin-bottom:15px}.display{margin-bottom:16px;height:60px}
+  .key{height:70px;border-radius:20px}.num{font-size:32px}
+  .enter{height:60px}
+}
+</style>
+</head>
+<body>
+<main class="phone">
+  <div class="status"><span>09:41</span><span class="status-right">▮▮▮  ◉  ▰</span></div>
+  <div class="lock">🔒</div>
+  <h1>Masukkan Sandi</h1>
+  <div class="sub">Masukkan 6 digit sandi Anda</div>
+
+  <div class="display" id="display" aria-label="Kolom sandi"></div>
+
+  <div class="keys">
+    <button class="key" onclick="press('1')"><span class="num">1</span></button>
+    <button class="key" onclick="press('2')"><span class="num">2</span><span class="letters">ABC</span></button>
+    <button class="key" onclick="press('3')"><span class="num">3</span><span class="letters">DEF</span></button>
+    <button class="key" onclick="press('4')"><span class="num">4</span><span class="letters">GHI</span></button>
+    <button class="key" onclick="press('5')"><span class="num">5</span><span class="letters">JKL</span></button>
+    <button class="key" onclick="press('6')"><span class="num">6</span><span class="letters">MNO</span></button>
+    <button class="key" onclick="press('7')"><span class="num">7</span><span class="letters">PQRS</span></button>
+    <button class="key" onclick="press('8')"><span class="num">8</span><span class="letters">TUV</span></button>
+    <button class="key" onclick="press('9')"><span class="num">9</span><span class="letters">WXYZ</span></button>
+    <button class="key" onclick="backspace()" aria-label="Hapus"><span class="icon">⌫</span></button>
+    <button class="key" onclick="press('0')"><span class="num">0</span></button>
+    <button class="key" onclick="toggleVisibility()" aria-label="Tampilkan sandi"><span class="icon" id="eye">◉</span></button>
+  </div>
+
+  <button class="enter" onclick="checkPassword()">🔒 &nbsp; Masuk</button>
+  <div class="message" id="message"></div>
+</main>
+
+<script>
+let password = "";
+let visible = false;
+const demoPassword = "123456"; // Ganti jika hanya untuk demo.
+
+function render(){
+  const display=document.getElementById("display");
+  display.innerHTML="";
+  for(let i=0;i<password.length;i++){
+    const d=document.createElement("span");
+    d.className="dot";
+    d.textContent=visible ? password[i] : "";
+    if(visible){ d.style.width="auto"; d.style.minWidth="12px"; d.style.height="auto"; d.style.background="transparent"; d.style.fontSize="24px"; }
+    display.appendChild(d);
+  }
+}
+function press(n){
+  if(password.length<6){ password+=n; render(); }
+}
+function backspace(){
+  password=password.slice(0,-1); render();
+}
+function toggleVisibility(){
+  visible=!visible;
+  document.getElementById("eye").textContent=visible ? "◉" : "◉";
+  render();
+}
+function checkPassword(){
+  const msg=document.getElementById("message");
+  if(password.length<6){msg.textContent="Masukkan 6 digit sandi.";return;}
+  msg.textContent = password===demoPassword ? "Sandi benar ✓" : "Sandi salah.";
+}
+render();
+
+// Bisa juga mengetik langsung dari keyboard komputer/HP.
+document.addEventListener("keydown",e=>{
+  if(/^[0-9]$/.test(e.key)) press(e.key);
+  if(e.key==="Backspace") backspace();
+  if(e.key==="Enter") checkPassword();
+});
+</script>
+</body>
+</html>
